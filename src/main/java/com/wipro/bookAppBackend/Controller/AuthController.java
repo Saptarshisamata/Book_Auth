@@ -4,7 +4,7 @@ package com.wipro.bookAppBackend.Controller;
 import com.wipro.bookAppBackend.Exception.InvalidUserNameOrPassword;
 import com.wipro.bookAppBackend.Exception.UserAlreadyExist;
 import com.wipro.bookAppBackend.Model.LoginData;
-import com.wipro.bookAppBackend.Model.ResponseType;
+import com.wipro.bookAppBackend.Model.ErrorMessage;
 import com.wipro.bookAppBackend.Model.User;
 import com.wipro.bookAppBackend.Service.AuthService;
 import org.springframework.http.HttpStatus;
@@ -24,23 +24,14 @@ public class AuthController {
     }
 
     @PostMapping("/sign_up")
-    public ResponseEntity<ResponseType> f1(@RequestBody User user){
-        try {
-            authService.register(user);
-            return new ResponseEntity<>(new ResponseType("success"), HttpStatus.CREATED);
-        }catch(UserAlreadyExist userAlreadyFound){
-            return new ResponseEntity<>(new ResponseType("already_exist"), HttpStatus.CONFLICT);
-
-        }
+    public ResponseEntity<ErrorMessage> f1(@RequestBody User user) throws UserAlreadyExist{
+        authService.register(user);
+        return new ResponseEntity<>(new ErrorMessage(HttpStatus.CREATED,"success"), HttpStatus.CREATED);
     }
 
     @PostMapping("/log_in")
-    public ResponseEntity<String> f2(@RequestBody LoginData loginData){
-        try {
-            authService.logIn(loginData);
-            return new ResponseEntity<>("success",HttpStatus.OK);
-        }catch (InvalidUserNameOrPassword invalidUserNameOrPassword){
-            return new ResponseEntity<>("invalid_username_or_password",HttpStatus.FORBIDDEN);
-        }
+    public ResponseEntity<String> f2(@RequestBody LoginData loginData) throws InvalidUserNameOrPassword{
+        authService.logIn(loginData);
+        return new ResponseEntity<>("success",HttpStatus.OK);
     }
 }

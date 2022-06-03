@@ -25,7 +25,7 @@ public class AuthServiceImpl implements AuthService {
     public String register(User user) throws UserAlreadyExist {
         Optional<User> chk_user = authRepository.findByEmail(user.getEmail());
         if(chk_user.isPresent()){
-            throw new UserAlreadyExist();
+            throw new UserAlreadyExist("user_already_exist");
         }
         authRepository.save(user);
         return "success";
@@ -35,10 +35,10 @@ public class AuthServiceImpl implements AuthService {
     public String logIn(LoginData loginData) throws  InvalidUserNameOrPassword {
         Optional<User> chk_user = authRepository.findByEmail(loginData.getEmail());
         if(chk_user.isEmpty()){
-            throw new InvalidUserNameOrPassword();
+            throw new InvalidUserNameOrPassword("invalid_username_or_password");
         }
         if(!(chk_user.get().getPswd().equals(loginData.getPswd()))){
-            throw new InvalidUserNameOrPassword();
+            throw new InvalidUserNameOrPassword("invalid_username_or_password");
         }
         return "token";
     }
