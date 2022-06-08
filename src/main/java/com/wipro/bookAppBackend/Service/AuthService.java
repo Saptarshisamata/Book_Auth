@@ -2,12 +2,13 @@ package com.wipro.bookAppBackend.Service;
 
 import com.wipro.bookAppBackend.Exception.InvalidUserNameOrPassword;
 import com.wipro.bookAppBackend.Exception.UserAlreadyExist;
-import com.wipro.bookAppBackend.Model.LoginData;
-import com.wipro.bookAppBackend.Model.User;
+import com.wipro.bookAppBackend.Model.*;
 
 public interface AuthService {
 
-    public String register(User user) throws UserAlreadyExist;
+    public RegisterResponse register(User user) throws UserAlreadyExist;
 
-    public String logIn(LoginData loginData) throws  InvalidUserNameOrPassword;
+    public LogInResponse logIn(LoginData loginData) throws  InvalidUserNameOrPassword;
+
+    UserDetailsResponse getUserDetailsByJWT(String token);
 }

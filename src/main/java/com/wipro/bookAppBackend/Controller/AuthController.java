@@ -3,16 +3,10 @@ package com.wipro.bookAppBackend.Controller;
 
 import com.wipro.bookAppBackend.Exception.InvalidUserNameOrPassword;
 import com.wipro.bookAppBackend.Exception.UserAlreadyExist;
-import com.wipro.bookAppBackend.Model.LoginData;
-import com.wipro.bookAppBackend.Model.ErrorMessage;
-import com.wipro.bookAppBackend.Model.User;
+import com.wipro.bookAppBackend.Model.*;
 import com.wipro.bookAppBackend.Service.AuthService;
-import com.wipro.bookAppBackend.utils.JWTUtility;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -27,17 +21,27 @@ public class AuthController {
     }
 
     @PostMapping("/sign_up")
-    public ResponseEntity<ErrorMessage> f1(@RequestBody User user) throws UserAlreadyExist{
-        this.authService.register(user);
-        return new ResponseEntity<>(new ErrorMessage(HttpStatus.CREATED,"created"), HttpStatus.CREATED);
+    public ResponseEntity<RegisterResponse> f1(@RequestBody User user) throws UserAlreadyExist{
+        RegisterResponse response = this.authService.register(user);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @PostMapping("/log_in")
-    public ResponseEntity<ErrorMessage> f2(@RequestBody LoginData loginData) throws InvalidUserNameOrPassword{
-        String token= this.authService.logIn(loginData);
-        return new ResponseEntity<>(new ErrorMessage(HttpStatus.OK,token),HttpStatus.OK);
+    public ResponseEntity<LogInResponse> f2(@RequestBody LoginData loginData) throws InvalidUserNameOrPassword{
+        LogInResponse response = this.authService.logIn(loginData);
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
+    @GetMapping("/user_detail_jwt")
+    public ResponseEntity<UserDetailsResponse> f3(@RequestHeader("Authorization") String token){
+        UserDetailsResponse userDetailsResponse = this.authService.getUserDetailsByJWT(token);
+        return new ResponseEntity<>(userDetailsResponse,HttpStatus.OK);
+    }
+
+    @DeleteMapping
+    public ResponseEntity<LogOutResponse> f4(){
+        return null;
+    }
     @GetMapping("/t")
     public String test(){
         return "success";

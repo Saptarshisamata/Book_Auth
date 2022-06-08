@@ -1,14 +1,16 @@
 package com.wipro.bookAppBackend.Service.impl;
 
+import com.sun.istack.NotNull;
 import com.wipro.bookAppBackend.Exception.InvalidUserNameOrPassword;
 import com.wipro.bookAppBackend.Exception.UserAlreadyExist;
-import com.wipro.bookAppBackend.Model.LoginData;
-import com.wipro.bookAppBackend.Model.User;
+import com.wipro.bookAppBackend.Model.*;
 import com.wipro.bookAppBackend.Repository.AuthRepository;
 import com.wipro.bookAppBackend.Service.AuthService;
 import com.wipro.bookAppBackend.utils.JWTUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.HttpStatus;
+import org.springframework.lang.Nullable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
@@ -40,18 +42,18 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
 
 
     @Override
-    public String register(User user) throws UserAlreadyExist {
+    public RegisterResponse register(User user) throws UserAlreadyExist {
         Optional<User> chk_user = authRepository.findByEmail(user.getEmail());
         if(chk_user.isPresent()){
             throw new UserAlreadyExist("user_already_exist");
         }
         user.setPswd(bCryptPasswordEncoder.encode(user.getPswd()));
         authRepository.save(user);
-        return "success";
+        return new RegisterResponse(HttpStatus.CREATED,"user_created");
     }
 
     @Override
-    public String logIn(LoginData loginData) throws  InvalidUserNameOrPassword {
+    public LogInResponse logIn(LoginData loginData) throws  InvalidUserNameOrPassword {
         Optional<User> chk_user = authRepository.findByEmail(loginData.getEmail());
         if(chk_user.isEmpty()){
             throw new InvalidUserNameOrPassword("invalid_username_or_password");
@@ -67,7 +69,17 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
 //        }
         final UserDetails userDetails = loadUserByUsername(loginData.getEmail());
         final String token = jwtUtility.generateToken(userDetails);
-        return token;
+        return new LogInResponse(HttpStatus.OK,"success",token);
+    }
+
+    public UserDetailsResponse getUserDetailsByJWT(String token){
+        token = token.substring(7);
+        String email = jwtUtility.getUserNameFromToken(token);
+        User user = authRepository.findByEmail(email).get();
+        String userName = user.getName();
+        String phoneNo = user.getPhone();
+        UserDetailsResponse userDetailsResponse = new UserDetailsResponse(HttpStatus.OK,userName,email,phoneNo);
+        return userDetailsResponse;
     }
 
     @Override
