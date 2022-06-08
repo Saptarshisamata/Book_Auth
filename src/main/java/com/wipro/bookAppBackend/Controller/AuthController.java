@@ -42,6 +42,13 @@ public class AuthController {
     public ResponseEntity<LogOutResponse> f4(){
         return null;
     }
+
+    @PatchMapping("/update_password")
+    public ResponseEntity<UpdatePasswordResponse> f5(@RequestBody UpdatePasswordRequest updatePasswordRequest,
+                                                     @RequestHeader("Authorization") String token) throws InvalidUserNameOrPassword{
+        UpdatePasswordResponse updatePasswordResponse = this.authService.updatePassword(updatePasswordRequest,token);
+        return new ResponseEntity<>(updatePasswordResponse,HttpStatus.OK);
+    }
     @GetMapping("/t")
     public String test(){
         return "success";

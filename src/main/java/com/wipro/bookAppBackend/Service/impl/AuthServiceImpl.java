@@ -83,6 +83,23 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
     }
 
     @Override
+    public UpdatePasswordResponse updatePassword(UpdatePasswordRequest updatePasswordRequest,String token) throws InvalidUserNameOrPassword {
+        token = token.substring(7);
+        String email = jwtUtility.getUserNameFromToken(token);
+        User user = authRepository.findByEmail(email).get();
+        try{
+            this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email,updatePasswordRequest.getOldPassword()));
+        }catch (AuthenticationException e){
+//            System.out.println("test");
+            throw  new InvalidUserNameOrPassword("invalid_username_or_password");
+        }
+        user.setPswd(bCryptPasswordEncoder.encode(updatePasswordRequest.getNewPassword()));
+        authRepository.save(user);
+ //       authRepository.updatePassword(updatePasswordRequest.getNewPassword(),email);
+        return new UpdatePasswordResponse(HttpStatus.OK,"updated");
+    }
+
+    @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         Optional<User> user = authRepository.findByEmail(email);
         if(user.isEmpty()){

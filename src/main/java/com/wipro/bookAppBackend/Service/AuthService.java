@@ -11,4 +11,6 @@ public interface AuthService {
     public LogInResponse logIn(LoginData loginData) throws  InvalidUserNameOrPassword;
 
     UserDetailsResponse getUserDetailsByJWT(String token);
+
+    UpdatePasswordResponse updatePassword(UpdatePasswordRequest updatePasswordRequest,String token) throws InvalidUserNameOrPassword;
 }
