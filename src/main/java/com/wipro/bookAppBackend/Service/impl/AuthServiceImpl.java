@@ -99,6 +99,12 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
         return new UpdatePasswordResponse(HttpStatus.OK,"updated");
     }
 
+    public AuthenticatedResponse authenticate(String token){
+        token = token.substring(7);
+        String email = jwtUtility.getUserNameFromToken(token);
+        return new AuthenticatedResponse(HttpStatus.OK,"authenticated",email);
+    }
+
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         Optional<User> user = authRepository.findByEmail(email);

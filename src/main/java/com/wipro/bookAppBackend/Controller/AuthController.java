@@ -51,8 +51,8 @@ public class AuthController {
     }
 
     @GetMapping("/authenticate")
-    public ResponseEntity<AuthenticatedResponse> f6(){
-        return new ResponseEntity<>(new AuthenticatedResponse(HttpStatus.OK,"authenticated"),HttpStatus.OK);
+    public ResponseEntity<AuthenticatedResponse> f6(@RequestHeader("Authorization") String token){
+        return new ResponseEntity<>(authService.authenticate(token),HttpStatus.OK);
     }
     @GetMapping("/t")
     public String test(){

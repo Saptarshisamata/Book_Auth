@@ -13,4 +13,7 @@ public interface AuthService {
     UserDetailsResponse getUserDetailsByJWT(String token);
 
     UpdatePasswordResponse updatePassword(UpdatePasswordRequest updatePasswordRequest,String token) throws InvalidUserNameOrPassword;
+
+    public AuthenticatedResponse authenticate(String token);
+
 }

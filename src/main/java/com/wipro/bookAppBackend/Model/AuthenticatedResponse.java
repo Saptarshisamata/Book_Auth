@@ -11,4 +11,5 @@ import org.springframework.http.HttpStatus;
 public class AuthenticatedResponse {
     private HttpStatus status;
     private String message;
+    private String email;
 }
