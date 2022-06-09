@@ -38,7 +38,7 @@ public class AuthController {
         return new ResponseEntity<>(userDetailsResponse,HttpStatus.OK);
     }
 
-    @DeleteMapping
+    @DeleteMapping("/log_out")
     public ResponseEntity<LogOutResponse> f4(){
         return null;
     }
@@ -48,6 +48,11 @@ public class AuthController {
                                                      @RequestHeader("Authorization") String token) throws InvalidUserNameOrPassword{
         UpdatePasswordResponse updatePasswordResponse = this.authService.updatePassword(updatePasswordRequest,token);
         return new ResponseEntity<>(updatePasswordResponse,HttpStatus.OK);
+    }
+
+    @GetMapping("/authenticate")
+    public ResponseEntity<AuthenticatedResponse> f6(){
+        return new ResponseEntity<>(new AuthenticatedResponse(HttpStatus.OK,"authenticated"),HttpStatus.OK);
     }
     @GetMapping("/t")
     public String test(){
