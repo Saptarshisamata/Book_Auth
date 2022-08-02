@@ -5,7 +5,9 @@ import com.wipro.bookAppBackend.Exception.InvalidUserNameOrPassword;
 import com.wipro.bookAppBackend.Exception.UserAlreadyExist;
 import com.wipro.bookAppBackend.Model.*;
 import com.wipro.bookAppBackend.Repository.AuthRepository;
+import com.wipro.bookAppBackend.Repository.RoleRepository;
 import com.wipro.bookAppBackend.Service.AuthService;
+import com.wipro.bookAppBackend.utils.BookUserDetails;
 import com.wipro.bookAppBackend.utils.JWTUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -21,7 +23,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class AuthServiceImpl implements AuthService, UserDetailsService {
@@ -30,6 +34,8 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
     private AuthRepository authRepository;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    @Autowired
+    private RoleRepository roleRepository;
     @Autowired
     private JWTUtility jwtUtility;
     @Lazy
@@ -47,6 +53,10 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
         if(chk_user.isPresent()){
             throw new UserAlreadyExist("user_already_exist");
         }
+        Role role = roleRepository.findById(Integer.toUnsignedLong(3)).orElseThrow();
+        Set<Role> roles = new HashSet<>();
+        roles.add(role);
+        user.setRoles(roles);
         user.setPswd(bCryptPasswordEncoder.encode(user.getPswd()));
         authRepository.save(user);
         return new RegisterResponse(HttpStatus.CREATED,"user_created");
@@ -111,6 +121,6 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
         if(user.isEmpty()){
             throw new UsernameNotFoundException("username not found");
         }
-        return new org.springframework.security.core.userdetails.User(user.get().getEmail(),user.get().getPswd(),new ArrayList<>());
+        return new BookUserDetails(user.get());
     }
 }

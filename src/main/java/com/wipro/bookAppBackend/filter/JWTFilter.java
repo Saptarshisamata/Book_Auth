@@ -1,6 +1,5 @@
 package com.wipro.bookAppBackend.filter;
 
-import com.wipro.bookAppBackend.Service.AuthService;
 import com.wipro.bookAppBackend.Service.impl.AuthServiceImpl;
 import com.wipro.bookAppBackend.utils.JWTUtility;
 import org.springframework.beans.factory.annotation.Autowired;

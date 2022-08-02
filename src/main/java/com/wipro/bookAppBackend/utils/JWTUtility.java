@@ -11,6 +11,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 
 @Component
@@ -25,7 +26,6 @@ public class JWTUtility implements Serializable {
     public String getUserNameFromToken(String token){
         return getClaimFromToken(token, Claims::getSubject);
     }
-
     public Date getExpirationDateFromToken(String token){
         return getClaimFromToken(token,Claims::getExpiration);
     }
